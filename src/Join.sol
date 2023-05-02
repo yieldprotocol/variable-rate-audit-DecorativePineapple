@@ -24,29 +24,42 @@ contract Join is IJoin, AccessControl {
     }
 
     /// @dev Take `amount` `asset` from `user` using `transferFrom`, minus any unaccounted `asset` in this contract.
-    function join(address user, uint128 amount) external virtual override auth returns (uint128) {
+    function join(
+        address user,
+        uint128 amount
+    ) external virtual override auth returns (uint128) {
         return _join(user, amount);
     }
 
     /// @dev Take `amount` `asset` from `user` using `transferFrom`, minus any unaccounted `asset` in this contract.
-    function _join(address user, uint128 amount) internal virtual returns (uint128) {
+    function _join(
+        address user,
+        uint128 amount
+    ) internal virtual returns (uint128) {
         IERC20 token = IERC20(asset);
         uint256 _storedBalance = storedBalance;
         uint256 available = token.balanceOf(address(this)) - _storedBalance; // Fine to panic if this underflows
         unchecked {
             storedBalance = _storedBalance + amount; // Unlikely that a uint128 added to the stored balance will make it overflow
-            if (available < amount) token.safeTransferFrom(user, address(this), amount - available);
+            if (available < amount)
+                token.safeTransferFrom(user, address(this), amount - available);
         }
         return amount;
     }
 
     /// @dev Transfer `amount` `asset` to `user`
-    function exit(address user, uint128 amount) external virtual override auth returns (uint128) {
+    function exit(
+        address user,
+        uint128 amount
+    ) external virtual override auth returns (uint128) {
         return _exit(user, amount);
     }
 
     /// @dev Transfer `amount` `asset` to `user`
-    function _exit(address user, uint128 amount) internal virtual returns (uint128) {
+    function _exit(
+        address user,
+        uint128 amount
+    ) internal virtual returns (uint128) {
         IERC20 token = IERC20(asset);
         storedBalance -= amount;
         token.safeTransfer(user, amount);
@@ -57,5 +70,11 @@ contract Join is IJoin, AccessControl {
     function retrieve(IERC20 token, address to) external virtual override auth {
         require(address(token) != address(asset), "Use exit for asset");
         token.safeTransfer(to, token.balanceOf(address(this)));
+    }
+
+    /// @dev Used to skim the amount of asset token which is the difference between the actual balance and the stored balance.
+    function skim(address to) external virtual auth {
+        IERC20 token = IERC20(asset);
+        token.safeTransfer(to, token.balanceOf(address(this)) - storedBalance);
     }
 }
