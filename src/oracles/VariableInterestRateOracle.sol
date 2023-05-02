@@ -201,16 +201,15 @@ contract VariableInterestRateOracle is IOracle, AccessControl, Constants {
             if (utilizationRate <= rateParameters.optimalUsageRate) {
                 interestRate =
                     rateParameters.baseVariableBorrowRate +
-                    utilizationRate.wmul(rateParameters.slope1).wdiv(
-                        rateParameters.optimalUsageRate
-                    );
+                    (utilizationRate * rateParameters.slope1) /
+                    rateParameters.optimalUsageRate;
             } else {
                 interestRate =
                     rateParameters.baseVariableBorrowRate +
                     rateParameters.slope1 +
-                    (utilizationRate - rateParameters.optimalUsageRate)
-                        .wmul(rateParameters.slope2)
-                        .wdiv(1e18 - rateParameters.optimalUsageRate);
+                    ((utilizationRate - rateParameters.optimalUsageRate) *
+                        rateParameters.slope2) /
+                    (1e18 - rateParameters.optimalUsageRate);
             }
             // Calculate per second rate
             interestRate = interestRate / 365 days;
