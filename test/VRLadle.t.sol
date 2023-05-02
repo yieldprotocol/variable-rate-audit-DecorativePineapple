@@ -627,12 +627,12 @@ contract RouteAndIntegrationTests is CompleteSetup {
     function testTokenAdditionAndRemoval() public {
         console.log("can add and remove tokens");
         vm.expectEmit(true, true, true, true);
-        emit TokenAdded(address(usdc), true);
+        emit TokenStatusChanged(address(usdc), true);
         ladle.addToken(address(usdc), true);
         assert(ladle.tokens(address(usdc)));
 
         vm.expectEmit(true, true, true, true);
-        emit TokenAdded(address(usdc), false);
+        emit TokenStatusChanged(address(usdc), false);
         ladle.addToken(address(usdc), false);
         assert(!ladle.tokens(address(usdc)));
     }
