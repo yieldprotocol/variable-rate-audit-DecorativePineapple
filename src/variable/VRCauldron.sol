@@ -109,6 +109,7 @@ contract VRCauldron is UUPSUpgradeable, AccessControl, Constants {
     // ==== Administration ====
 
     /// @dev Add a new Asset.
+    /// @notice Only ERC20 support has been tested thoroughly. Any other tokens would have to be tested.
     function addAsset(bytes6 assetId, address asset) external auth {
         require(assetId != bytes6(0), "Asset id is zero");
         require(assets[assetId] == address(0), "Id already used");
