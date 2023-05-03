@@ -30,7 +30,7 @@ import "@yield-protocol/utils-v2/src/interfaces/IWETH9.sol";
 import "@yield-protocol/utils-v2/src/token/IERC20Metadata.sol";
 import "@yield-protocol/utils-v2/src/utils/Cast.sol";
 import "@yield-protocol/utils-v2/src/utils/Math.sol";
-import "openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 using Cast for uint256;
 using Cast for uint256;
@@ -156,13 +156,6 @@ abstract contract Fixture is Test, TestConstants, TestExtensions {
         daiJoin = new FlashJoin(address(dai));
         baseJoin = new FlashJoin(address(base));
 
-        vyToken = new VYToken(
-            baseId,
-            IOracle(address(chiRateOracle)),
-            IJoin(baseJoin),
-            base.name(),
-            base.symbol()
-        );
         /// Orchestrating the protocol
         setUpOracles();
 
@@ -176,7 +169,7 @@ abstract contract Fixture is Test, TestConstants, TestExtensions {
 
         vyTokenProxy = new ERC1967Proxy(
             address(vyToken),
-            abi.encodeWithSignature("initialize(address)", address(this))
+            abi.encodeWithSignature("initialize(address,string,string,uint8)", address(this), base.name(), base.symbol(), base.decimals())
         );
 
         vyToken = VYToken(address(vyTokenProxy));

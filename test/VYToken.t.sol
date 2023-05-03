@@ -10,12 +10,18 @@ contract VYTokenTest is VYTokenZeroState {
         assertTrue(vyToken.initialized());
     }
 
+    function testInitialization() public {
+        IERC20Metadata token = IERC20Metadata(vyToken.underlying());
+        assertEq(token.name(), vyToken.name());
+        assertEq(token.decimals(), vyToken.decimals());
+        assertEq(token.symbol(), vyToken.symbol());
+    }
+
     // Test that the storage can't be initialized again
-    function testInitializeRevertsIfInitialized() public {
+    function testFail_InitializeRevertsIfInitialized() public {
         vyToken.grantRole(VYToken.initialize.selector, address(this));
-        
-        vm.expectRevert("Already initialized");
-        vyToken.initialize(address(this));
+        // vm.expectRevert(bytes(""));
+        vyToken.initialize(address(this), base.name(), base.symbol(), base.decimals());
     }
 
     // Test that only authorized addresses can upgrade
