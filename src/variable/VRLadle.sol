@@ -27,7 +27,7 @@ contract VRLadle is UUPSUpgradeable, AccessControl() {
 
     event JoinAdded(bytes6 indexed assetId, address indexed join);
     event IntegrationAdded(address indexed integration, bool indexed set);
-    event TokenAdded(address indexed token, bool indexed set);
+    event TokenStatusChanged(address indexed token, bool indexed set);
     event FeeSet(uint256 fee);
 
     bool public initialized;
@@ -108,7 +108,7 @@ contract VRLadle is UUPSUpgradeable, AccessControl() {
     /// @dev Add or remove a token that the Ladle can call `transfer` or `permit` on.
     function _addToken(address token, bool set) private {
         tokens[token] = set;
-        emit TokenAdded(token, set);
+        emit TokenStatusChanged(token, set);
     }
 
     /// @dev Add a new Join for an Asset, or replace an existing one for a new one.
@@ -217,7 +217,7 @@ contract VRLadle is UUPSUpgradeable, AccessControl() {
 
     /// @dev Accept Ether, wrap it and forward it to the provided address
     /// This function should be called first in a batch, and the Join should keep track of stored reserves
-    /// Passing the id for a join that doesn't link to a contract implemnting IWETH9 will fail
+    /// Passing the id for a join that doesn't link to a contract implementing IWETH9 will fail
     function wrapEther(
         address to
     ) external payable returns (uint256 ethTransferred) {
@@ -363,7 +363,7 @@ contract VRLadle is UUPSUpgradeable, AccessControl() {
     }
 
     /// @dev Repay all debt in a vault.
-    /// The base tokens need to be already in the join, unaccounted for. The surplus base will be returned to msg.sender.
+    /// The base tokens need to be already in the join, unaccounted for. The surplus base will be returned to refundTo address, if refundTo is different than address(0).
     function repay(
         bytes12 vaultId_,
         address inkTo,

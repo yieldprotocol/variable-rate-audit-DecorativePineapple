@@ -66,9 +66,7 @@ contract VariableInterestRateOracle is IOracle, AccessControl, Constants {
         ladle = ladle_;
     }
 
-    /** 
-    @notice Set a source
-     */
+    /// @notice Set parameters for the given base & kind
     function setSource(
         bytes6 baseId,
         bytes6 kindId,
@@ -105,6 +103,7 @@ contract VariableInterestRateOracle is IOracle, AccessControl, Constants {
         );
     }
 
+    /// @dev Update the parameters for the given base & kind
     function updateParameters(
         bytes6 baseId,
         bytes6 kindId,
@@ -138,6 +137,7 @@ contract VariableInterestRateOracle is IOracle, AccessControl, Constants {
         );
     }
 
+    /// @dev Return the accumulated for the given base & kind
     function peek(
         bytes32 base,
         bytes32 kind,
@@ -158,6 +158,7 @@ contract VariableInterestRateOracle is IOracle, AccessControl, Constants {
         updateTime = source.lastUpdated;
     }
 
+    /// @dev Return the accumulated for the given base & kind
     function get(
         bytes32 base,
         bytes32 kind,

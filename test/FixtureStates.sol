@@ -27,7 +27,7 @@ abstract contract ZeroState is Fixture {
         bytes6 indexed ilkId
     );
     event VaultGiven(bytes12 indexed vaultId, address indexed receiver);
-    event TokenAdded(address indexed token, bool indexed set);
+    event TokenStatusChanged(address indexed token, bool indexed set);
     event IntegrationAdded(address indexed integration, bool indexed set);
     event Approval(address indexed owmer, address indexed spender, uint256 value);
     event SeriesMatured(uint256 chiAtMaturity);
